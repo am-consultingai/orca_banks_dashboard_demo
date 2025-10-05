@@ -244,6 +244,30 @@
         .account-card.fade-in {
             animation: fadeIn 0.4s ease-in;
         }
+
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 30px 20px;
+            margin-top: 20px;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .footer-logo {
+            height: 50px;
+        }
+
+        .footer-logo img {
+            height: 100%;
+            width: auto;
+        }
     </style>
 </head>
 <body>
@@ -382,6 +406,13 @@
             <div class="loader"></div>
             <span class="btn-text">Refresh All Accounts</span>
         </button>
+
+        <div class="footer">
+            <span class="footer-text">Powered by</span>
+            <div class="footer-logo">
+                <img src="https://i.ibb.co/bj2NWCq3/AM-Logo-white-blue-glow.png" alt="AM Company Logo">
+            </div>
+        </div>
     </div>
 
     <script>
