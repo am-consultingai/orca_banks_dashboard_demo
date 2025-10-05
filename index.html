@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Account Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .company-logo {
+            height: 30px;
+            margin-bottom: 20px;
+        }
+
+        .company-logo img {
+            height: 100%;
+            width: auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: left;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin: 0;
+            width: 100%;
+        }
+
+        .account-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .account-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .account-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .bank-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 12px;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .bank-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .bank-logo-placeholder {
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+            border: 2px dashed #ccc;
+        }
+
+        .account-info {
+            flex-grow: 1;
+        }
+
+        .bank-name {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .account-type {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .balance-section {
+            margin-bottom: 25px;
+        }
+
+        .balance-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .balance-amount {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #2ecc71;
+        }
+
+        .transactions-section {
+            margin-top: 20px;
+        }
+
+        .transactions-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .transaction:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-details {
+            flex-grow: 1;
+        }
+
+        .transaction-description {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .transaction-date {
+            font-size: 0.85em;
+            color: #999;
+        }
+
+        .transaction-amount {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .transaction-amount.positive {
+            color: #2ecc71;
+        }
+
+        .transaction-amount.negative {
+            color: #e74c3c;
+        }
+
+        .refresh-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            min-width: 220px;
+        }
+
+        .refresh-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .loader {
+            width: 18px;
+            height: 18px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        .refresh-btn.loading .loader {
+            display: block;
+        }
+
+        .refresh-btn.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .account-card.refreshing {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        .account-card.fade-in {
+            animation: fadeIn 0.4s ease-in;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <div class="company-logo">
+                <img src="https://www.orca-ai.io/wp-content/themes/orca/images/logo-white.png" alt="Orca Logo">
+            </div>
+            <h1>Orca Bank Accounts Dashboard</h1>
+        </div>
+
+        <!-- Bank Account 1 -->
+        <div class="account-card">
+            <div class="account-header">
+                <div class="bank-logo">
+                    <img src="https://www.chase.com/content/dam/unified-assets/logo/chase/chase-logo/additional-file-formats/logo_chase_headerfooter.svg" alt="Chase Bank Logo">
+                </div>
+                <div class="account-info">
+                    <div class="bank-name">Chase Bank</div>
+                    <div class="account-type">Business Checking •••• 4532</div>
+                </div>
+            </div>
+            <div class="balance-section">
+                <div class="balance-label">Current Balance</div>
+                <div class="balance-amount">$187,458.32</div>
+            </div>
+            <div class="transactions-section">
+                <div class="transactions-title">Recent Transactions</div>
+                <div class="transaction">
+                    <div class="transaction-details">
+                        <div class="transaction-description">Client Invoice Payment - Acme Corp</div>
+                        <div class="transaction-date">Oct 1, 2025</div>
+                    </div>
+                    <div class="transaction-amount positive">+$45,200.00</div>
+                </div>
+                <div class="transaction">
+                    <div class="transaction-details">
+                        <div class="transaction-description">Vendor Payment - Office Supplies Inc</div>
+                        <div class="transaction-date">Sep 30, 2025</div>
+                    </div>
+                    <div class="transaction-amount negative">-$3,487.45</div>
+                </div>
+                <div class="transaction">
+                    <div class="transaction-details">
+                        <div class="transaction-description">Payroll Processing - September</div>
+                        <div class="transaction-date">Sep 28, 2025</div>
+                    </div>
+                    <div class="transaction-amount negative">-$28,142.50</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bank Account 2 -->
+        <div class="account-card">
+            <div class="account-header">
+                <div class="bank-logo">
+                    <img src="https://vachamber.com/wp-content/uploads/2019/10/bank-of-america-Logo-Color-Stacked.png" alt="Bank of America Logo">
+                </div>
+                <div class="account-info">
+                    <div class="bank-name">Bank of America</div>
+                    <div class="account-type">Business Checking •••• 7891</div>
+                </div>
+            </div>
+            <div class="balance-section">
+                <div class="balance-label">Current Balance</div>
+                <div class="balance-amount">$63,742.18</div>
+            </div>
+            <div class="transactions-section">
+                <div class="transactions-title">Recent Transactions</div>
+                <div class="transaction">
+                    <div class="transaction-details">
+                        <div class="transaction-description">Wire Transfer - Global Tech Solutions</div>
+                        <div class="transaction-date">Oct 3, 2025</div>
+                    </div>
+                    <div class="transaction-amount positive">+$25,000.00</div>
+                </div>
+                <div class="transaction">
+                    <div class="transaction-details">
+                        <div class="transaction-description">Insurance Premium - Business Policy</div>
+                        <div class="transaction-date">Oct 2, 2025</div>
+                    </div>
+                    <div class="transaction-amount negative">-$4,156.73</div>
+                </div>
+                <div class="transaction">
+                    <div class="transaction-details">
+                        <div class="transaction-description">Software Subscription - Adobe Enterprise</div>
+                        <div class="transaction-date">Oct 1, 2025</div>
+                    </div>
+                    <div class="transaction-amount negative">-$852.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bank Account 3 -->
+        <div class="account-card">
+            <div class="account-header"> 
+				<div class="bank-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e2/Wells_Fargo_Logo_%282020%29.svg" alt="Wells_Fargo_Logo_">
+                </div>
+                <div class="account-info">
+                    <div class="bank-name">Wells Fargo</div>
+                    <div class="account-type">Business Checking •••• 2156</div>
+                </div>
+            </div>
+            <div class="balance-section">
+                <div class="balance-label">Current Balance</div>
+                <div class="balance-amount">$124,921.05</div>
+            </div>
+            <div class="transactions-section">
+                <div class="transactions-title">Recent Transactions</div>
+                <div class="transaction">
+                    <div class="transaction-details">
+                        <div class="transaction-description">Lease Payment - Office Space Downtown</div>
+                        <div class="transaction-date">Oct 1, 2025</div>
+                    </div>
+                    <div class="transaction-amount negative">-$12,500.00</div>
+                </div>
+                <div class="transaction">
+                    <div class="transaction-details">
+                        <div class="transaction-description">Consulting Services - Marketing Agency</div>
+                        <div class="transaction-date">Sep 29, 2025</div>
+                    </div>
+                    <div class="transaction-amount negative">-$8,500.00</div>
+                </div>
+                <div class="transaction">
+                    <div class="transaction-details">
+                        <div class="transaction-description">Merchant Services Fees</div>
+                        <div class="transaction-date">Sep 27, 2025</div>
+                    </div>
+                    <div class="transaction-amount negative">-$1,268.25</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="refresh-btn" id="refreshBtn">
+            <div class="loader"></div>
+            <span class="btn-text">Refresh All Accounts</span>
+        </button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('refreshBtn');
+        const cards = document.querySelectorAll('.account-card');
+        
+        btn.addEventListener('click', function() {
+            // Add loading class to button and disable it
+            btn.classList.add('loading');
+            btn.disabled = true;
+            
+            // Add refreshing state to all cards
+            cards.forEach(card => {
+                card.classList.add('refreshing');
+            });
+            
+            // Remove loading state after 1 second
+            setTimeout(function() {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                
+                // Remove refreshing state and add fade-in animation
+                cards.forEach(card => {
+                    card.classList.remove('refreshing');
+                    card.classList.add('fade-in');
+                    
+                    // Remove fade-in class after animation completes
+                    setTimeout(() => {
+                        card.classList.remove('fade-in');
+                    }, 400);
+                });
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
